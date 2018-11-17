@@ -19,9 +19,8 @@ class FacebookController extends Controller
 
         $helper = $fb->getRedirectLoginHelper();
 
-        $permissions = ['email']; // Optional permissions
+        $permissions = ['email', 'user_photos']; // Optional permissions
         $loginUrl = $helper->getLoginUrl('https://localhost/getToken', $permissions);
-
         echo '<a href="' . htmlspecialchars($loginUrl) . '">Log in with Facebook!</a>';
     }
 
@@ -65,22 +64,15 @@ class FacebookController extends Controller
             exit;
         }
 
-        // Logged in
-        echo '<h3>Access Token</h3>';
-        var_dump($accessToken->getValue());
-
         // The OAuth 2.0 client handler helps us manage access tokens
         $oAuth2Client = $fb->getOAuth2Client();
 
         // Get the access token metadata from /debug_token
         $tokenMetadata = $oAuth2Client->debugToken($accessToken);
-        echo '<h3>Metadata</h3>';
-        var_dump($tokenMetadata);
 
         // Validation (these will throw FacebookSDKException's when they fail)
         $tokenMetadata->validateAppId(env('client_id')); // Replace {app-id} with your app id
         // If you know the user ID this access token belongs to, you can validate it here
-        //$tokenMetadata->validateUserId('123');
         $tokenMetadata->validateExpiration();
 
         if (!$accessToken->isLongLived()) {
@@ -91,14 +83,12 @@ class FacebookController extends Controller
                 echo "<p>Error getting long-lived access token: " . $e->getMessage() . "</p>\n\n";
                 exit;
             }
-
-            echo '<h3>Long-lived</h3>';
-            var_dump($accessToken->getValue());
         }
 
         // Save access token into session for later use
         session(['fb_access_token' => (string) $accessToken]);
 
+        $this->getUser();
         return redirect('/');
     }
 
@@ -122,10 +112,9 @@ class FacebookController extends Controller
         }
 
         $user = $response->getGraphUser();
-        dd($user);
-        //echo 'Name: ' . $user['name'];
-        // OR
-        echo 'Name: ' . $user->getName();
+        session(['fb_user_id' => $user['id']]);
+
+        return;
     }
 
 }

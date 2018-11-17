@@ -12,7 +12,7 @@
  */
 
 Route::get('/', 'PhotoController@index');
-Route::get('/authenticate', 'PhotoController@authenticate');
+Route::get('/getPhotos', 'PhotoController@getPhotos');
+
 Route::get('/login', 'FacebookController@login');
 Route::get('/getToken', 'FacebookController@getToken');
-Route::get('/getUser', 'FacebookController@getUser');

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Storage;
 
 class PhotoController extends Controller
 {
@@ -13,7 +14,10 @@ class PhotoController extends Controller
      */
     public function index()
     {
-        return view('/photo/homepage');
+        $file = Storage::disk('public')->get('picco4.jpg');
+
+        return view('/photo/homepage', ['myFile' => $file]);
+
     }
 
     /**
@@ -21,9 +25,40 @@ class PhotoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function getPhotos()
     {
-        //
+        $userId = session('fb_user_id');
+        /* PHP SDK v5.0.0 */
+        $fb = new \Facebook\Facebook([
+            'app_id' => env('client_id'),
+            'app_secret' => env('client_secret'),
+            'default_graph_version' => 'v3.2',
+        ]);
+        /* make the API call */
+        try {
+            // Returns a `Facebook\FacebookResponse` object
+            $response = $fb->get(
+                "/{$userId}/photos?fields=source",
+                session('fb_access_token')
+            );
+        } catch (Facebook\Exceptions\FacebookResponseException $e) {
+            echo 'Graph returned an error: ' . $e->getMessage();
+            exit;
+        } catch (Facebook\Exceptions\FacebookSDKException $e) {
+            echo 'Facebook SDK returned an error: ' . $e->getMessage();
+            exit;
+        }
+        $graphEdge = $response->getGraphList();
+        $count = 0;
+
+        foreach ($graphEdge as $graphNode) {
+            $url = $graphNode['source'];
+            $contents = file_get_contents($url);
+            $name = "picco{$count}.jpg";
+            \Storage::disk('public')->put($name, $contents);
+            $count++;
+        }
+        return redirect('/');
     }
 
     /**
