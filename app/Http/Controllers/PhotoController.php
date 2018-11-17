@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Cookie;
 use Illuminate\Http\Request;
 use Storage;
 
@@ -15,9 +16,8 @@ class PhotoController extends Controller
     public function index()
     {
         $file = Storage::disk('public')->get('picco4.jpg');
-
-        return view('/photo/homepage', ['myFile' => $file]);
-
+        // $photos = Storage::disk('public')->files();
+        return view('/photo/homepage', ['myPhoto' => $file]);
     }
 
     /**
@@ -25,9 +25,11 @@ class PhotoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function getPhotos()
+    public function savePhotosToComputer()
     {
-        $userId = session('fb_user_id');
+        $userId = Cookie::get('fb_user_id');
+        $access_token = Cookie::get('fb_access_token');
+
         /* PHP SDK v5.0.0 */
         $fb = new \Facebook\Facebook([
             'app_id' => env('client_id'),
@@ -39,7 +41,7 @@ class PhotoController extends Controller
             // Returns a `Facebook\FacebookResponse` object
             $response = $fb->get(
                 "/{$userId}/photos?fields=source",
-                session('fb_access_token')
+                $access_token
             );
         } catch (Facebook\Exceptions\FacebookResponseException $e) {
             echo 'Graph returned an error: ' . $e->getMessage();
