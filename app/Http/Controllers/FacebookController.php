@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Cookie;
+
 class FacebookController extends Controller
 {
 
@@ -12,14 +14,13 @@ class FacebookController extends Controller
         }
 
         $fb = new \Facebook\Facebook([
-            'app_id' => env('client_id'), // Replace {app-id} with your app id
+            'app_id' => env('client_id'),
             'app_secret' => env('client_secret'),
             'default_graph_version' => 'v2.2',
         ]);
 
         $helper = $fb->getRedirectLoginHelper();
-
-        $permissions = ['email', 'user_photos']; // Optional permissions
+        $permissions = ['user_photos'];
         $loginUrl = $helper->getLoginUrl('https://localhost/getToken', $permissions);
         echo '<a href="' . htmlspecialchars($loginUrl) . '">Log in with Facebook!</a>';
     }
@@ -31,7 +32,7 @@ class FacebookController extends Controller
         }
 
         $fb = new \Facebook\Facebook([
-            'app_id' => env('client_id'), // Replace {app-id} with your app id
+            'app_id' => env('client_id'),
             'app_secret' => env('client_secret'),
             'default_graph_version' => 'v2.2',
         ]);
@@ -64,15 +65,11 @@ class FacebookController extends Controller
             exit;
         }
 
-        // The OAuth 2.0 client handler helps us manage access tokens
         $oAuth2Client = $fb->getOAuth2Client();
-
-        // Get the access token metadata from /debug_token
         $tokenMetadata = $oAuth2Client->debugToken($accessToken);
 
         // Validation (these will throw FacebookSDKException's when they fail)
-        $tokenMetadata->validateAppId(env('client_id')); // Replace {app-id} with your app id
-        // If you know the user ID this access token belongs to, you can validate it here
+        $tokenMetadata->validateAppId(env('client_id'));
         $tokenMetadata->validateExpiration();
 
         if (!$accessToken->isLongLived()) {
@@ -85,15 +82,19 @@ class FacebookController extends Controller
             }
         }
 
-        // Save access token into session for later use
-        session(['fb_access_token' => (string) $accessToken]);
-
-        $this->getUser();
-        return redirect('/');
+        return redirect('/getUser')->cookie(
+            'fb_access_token', $accessToken, 10
+        );
     }
 
     public function getUser()
     {
+        $access_token = Cookie::get('fb_access_token');
+
+        if (!isset($access_token)) {
+            return redirect('/login');
+        }
+
         $fb = new \Facebook\Facebook([
             'app_id' => env('client_id'),
             'app_secret' => env('client_secret'),
@@ -101,8 +102,7 @@ class FacebookController extends Controller
         ]);
 
         try {
-            // Returns a `Facebook\FacebookResponse` object
-            $response = $fb->get('/me?fields=id,cover,name,first_name,last_name,age_range,link,gender,locale,picture,timezone,updated_time,verified', session('fb_access_token'));
+            $response = $fb->get('/me?fields=id,cover,name,first_name,last_name,age_range,link,gender,locale,picture,timezone,updated_time,verified', $access_token);
         } catch (Facebook\Exceptions\FacebookResponseException $e) {
             echo 'Graph returned an error: ' . $e->getMessage();
             exit;
@@ -112,9 +112,8 @@ class FacebookController extends Controller
         }
 
         $user = $response->getGraphUser();
-        session(['fb_user_id' => $user['id']]);
-
-        return;
+        Cookie::queue('fb_user_id', $user['id'], 10);
+        return view('photo/decision');
     }
 
 }

@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use Cookie;
 use Illuminate\Http\Request;
 use Storage;
+use ZipArchive;
 
 class PhotoController extends Controller
 {
@@ -14,10 +16,7 @@ class PhotoController extends Controller
      */
     public function index()
     {
-        $file = Storage::disk('public')->get('picco4.jpg');
-
-        return view('/photo/homepage', ['myFile' => $file]);
-
+        return view('/photo/homepage');
     }
 
     /**
@@ -25,9 +24,11 @@ class PhotoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function getPhotos()
+    public function savePhotosToComputer()
     {
-        $userId = session('fb_user_id');
+        $userId = Cookie::get('fb_user_id');
+        $access_token = Cookie::get('fb_access_token');
+
         /* PHP SDK v5.0.0 */
         $fb = new \Facebook\Facebook([
             'app_id' => env('client_id'),
@@ -39,7 +40,7 @@ class PhotoController extends Controller
             // Returns a `Facebook\FacebookResponse` object
             $response = $fb->get(
                 "/{$userId}/photos?fields=source",
-                session('fb_access_token')
+                $access_token
             );
         } catch (Facebook\Exceptions\FacebookResponseException $e) {
             echo 'Graph returned an error: ' . $e->getMessage();
@@ -48,30 +49,66 @@ class PhotoController extends Controller
             echo 'Facebook SDK returned an error: ' . $e->getMessage();
             exit;
         }
-        $graphEdge = $response->getGraphList();
-        $count = 0;
 
-        foreach ($graphEdge as $graphNode) {
-            $url = $graphNode['source'];
-            $contents = file_get_contents($url);
-            $name = "picco{$count}.jpg";
-            \Storage::disk('public')->put($name, $contents);
-            $count++;
+        $graphEdge = $response->getGraphList();
+
+        $zip = new ZipArchive;
+
+        $public_dir = public_path();
+        $zipFileName = 'facebookPhotos.zip';
+        $filetopath = $public_dir . '/' . $zipFileName;
+        $headers = ['Content-Type' => 'application/octet-stream'];
+
+        if ($zip->open($public_dir . '/' . $zipFileName, ZipArchive::CREATE) === true) {
+            foreach ($graphEdge as $graphNode) {
+                $name = 'facebook ' . time() . '.jpg';
+                $url = $graphNode['source'];
+                $contents = file_get_contents($url);
+
+                $zip->addFromString($name, $contents);
+            }
+            $zip->close();
         }
+        if (file_exists($filetopath)) {
+            return response()->download($filetopath, $zipFileName, $headers)->deleteFileAfterSend(true);
+        }
+
         return redirect('/');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+/**
+ *
+ *  THE DOWNLOAD DOESNT WORK PUTTING INTO A FUNCTION> WILL SORT THIS OUT LATER
+ *
+ */
 
+    // public function download($graphEdge)
+    // {
+
+    //     $zip = new ZipArchive;
+
+    //     $public_dir = public_path();
+    //     $zipFileName = 'facebookPhotos.zip';
+    //     $filetopath = $public_dir . '/' . $zipFileName;
+    //     $headers = ['Content-Type' => 'application/octet-stream'];
+
+    //     if ($zip->open($public_dir . '/' . $zipFileName, ZipArchive::CREATE) === true) {
+    //         foreach ($graphEdge as $graphNode) {
+    //             $name = 'facebook ' . time() . '.jpg';
+    //             $url = $graphNode['source'];
+    //             $contents = file_get_contents($url);
+
+    //             $zip->addFromString($name, $contents);
+    //         }
+    //         // Close ZipArchive
+    //         $zip->close();
+    //     }
+    //     if (file_exists($filetopath)) {
+    //         return response()->download($filetopath, $zipFileName, $headers)->deleteFileAfterSend(true);
+    //     }
+
+    //     return redirect('/');
+    // }
     /**
      * Display the specified resource.
      *
