@@ -26,9 +26,9 @@
             }
 
             .flex-center {
-                align-items: center;
                 display: flex;
                 justify-content: center;
+                margin-top: 10%;
             }
 
             .position-ref {
@@ -78,11 +78,6 @@
                     <a href="/">Google Drive</a>
                     <a href="/">One Drive</a>
                 </div>
-
-                <img src=<?="storage/picco5.jpg"?>>
-
-
-
             </div>
         </div>
     </body>

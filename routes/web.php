@@ -13,6 +13,7 @@
 
 Route::get('/', 'PhotoController@index');
 Route::get('/savePhotosToComputer', 'PhotoController@savePhotosToComputer');
+Route::get('/download', 'PhotoController@download');
 
 Route::get('/login', 'FacebookController@login');
 Route::get('/getToken', 'FacebookController@getToken');

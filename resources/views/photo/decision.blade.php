@@ -26,9 +26,9 @@
             }
 
             .flex-center {
-                align-items: center;
                 display: flex;
                 justify-content: center;
+                margin-top: 10%;
             }
 
             .position-ref {
@@ -66,10 +66,10 @@
     </head>
     <body>
         <div class="flex-center position-ref full-height">
-        <div class="top-right links">
+        <!-- <div class="top-right links">
                     <a href="{{ url('/login') }}">Login</a>
                     <a href="{{ url('/register') }}">Register</a>
-                </div>
+                </div> -->
             <div class="content">
                 <div class="title m-b-md">
                     Photocopy into which location?
