@@ -2,31 +2,97 @@
 
 namespace App\Http\Controllers;
 
+use Cookie;
+use Ziparchive;
+use \Facebook\Facebook;
+
 class FacebookController extends Controller
 {
-    // public function __construct(\Facebook\Facebook $fb) {
-    //     $this->fb = $fb;
-    // }
-
-    public function index()
+    public function __construct(Facebook $fb)
     {
-        return view('photo/decision');
+        $this->fb = $fb;
+    }
+
+    public function decision($albumId, $albumName)
+    {
+        return view('facebook/decision', ['albumId' => $albumId, 'albumName' => $albumName]);
+    }
+
+    public function albums()
+    {
+        $userId = Cookie::get('fb_user_id');
+        $access_token = Cookie::get('fb_access_token');
+        /* make the API call */
+        try {
+            $response = $this->fb->get(
+                "/{$userId}/albums",
+                $access_token
+            );
+
+        } catch (Facebook\Exceptions\FacebookResponseException $e) {
+            echo 'Graph returned an error: ' . $e->getMessage();
+            exit;
+        } catch (Facebook\Exceptions\FacebookSDKException $e) {
+            echo 'Facebook SDK returned an error: ' . $e->getMessage();
+            exit;
+        }
+
+        $data = $response->getGraphList();
+
+        return view('facebook/albums', ['PhotoAlbums' => $data]);
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function savePhotosToComputer($albumId, $albumName)
+    {
+        $userId = Cookie::get('fb_user_id');
+        $access_token = Cookie::get('fb_access_token');
+
+        /* make the API call */
+        try {
+            $response = $this->fb->get(
+                "/$albumId/photos?fields=id,source",
+                $access_token
+            );
+        } catch (Facebook\Exceptions\FacebookResponseException $e) {
+            echo 'Graph returned an error: ' . $e->getMessage();
+            exit;
+        } catch (Facebook\Exceptions\FacebookSDKException $e) {
+            echo 'Facebook SDK returned an error: ' . $e->getMessage();
+            exit;
+        }
+
+        $albumPhotos = $response->getGraphList();
+        $zip = new ZipArchive;
+
+        $public_dir = public_path();
+        $zipFileName = "$albumName.zip";
+        $filetopath = $public_dir . '/' . $zipFileName;
+        $headers = ['Content-Type' => 'application/octet-stream'];
+
+        if ($zip->open($public_dir . '/' . $zipFileName, ZipArchive::CREATE) === true) {
+            foreach ($albumPhotos as $photo) {
+                $name = $albumName . time() . '.jpg';
+                $url = $photo['source'];
+                $contents = file_get_contents($url);
+
+                $zip->addFromString($name, $contents);
+            }
+            $zip->close();
+        }
+        if (file_exists($filetopath)) {
+            return response()->download($filetopath, $zipFileName, $headers)->deleteFileAfterSend(true);
+        }
     }
 
     public function getToken()
     {
-        if (!session_id()) {
-            session_start();
-        }
-
-        $fb = new \Facebook\Facebook([
-            'app_id' => env('client_id'),
-            'app_secret' => env('client_secret'),
-            'default_graph_version' => 'v2.2',
-        ]);
-
-        $helper = $fb->getRedirectLoginHelper();
-
+        $helper = $this->fb->getRedirectLoginHelper();
+        $_SESSION['FBRLH_state'] = $_GET['state'];
         try {
             $accessToken = $helper->getAccessToken();
         } catch (Facebook\Exceptions\FacebookResponseException $e) {
@@ -52,7 +118,7 @@ class FacebookController extends Controller
             exit;
         }
 
-        $oAuth2Client = $fb->getOAuth2Client();
+        $oAuth2Client = $this->fb->getOAuth2Client();
         $tokenMetadata = $oAuth2Client->debugToken($accessToken);
 
         // Validation (these will throw FacebookSDKException's when they fail)
@@ -68,7 +134,7 @@ class FacebookController extends Controller
                 exit;
             }
         }
-        return redirect('/facebook')->cookie(
+        return redirect('/facebook/albums')->cookie(
             'fb_access_token', $accessToken, 10
         );
     }

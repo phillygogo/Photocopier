@@ -4,9 +4,16 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Cookie;
+use Response;
+use \Facebook\Facebook;
 
-class Facebook
+class FacebookMiddleware
 {
+    public function __construct(Facebook $fb)
+    {
+        $this->fb = $fb;
+    }
+
     /**
      * Handle an incoming request.
      *
@@ -16,11 +23,11 @@ class Facebook
      */
     public function handle($request, Closure $next)
     {
-        if (empty(Cookie::get('fb_has_logged'))) {
+        if (empty(Cookie::get('fb_has_logged')) || empty(Cookie::get('fb_access_token'))) {
             return $this->login();
         }
 
-        if (!empty(Cookie::get('fb_access_token'))) {
+        if (is_null(Cookie::get('fb_user_id'))) {
             $this->getUserId();
         }
 
@@ -29,17 +36,7 @@ class Facebook
 
     public function login()
     {
-        if (!session_id()) {
-            session_start();
-        }
-
-        $fb = new \Facebook\Facebook([
-            'app_id' => env('client_id'),
-            'app_secret' => env('client_secret'),
-            'default_graph_version' => 'v2.2',
-        ]);
-
-        $helper = $fb->getRedirectLoginHelper();
+        $helper = $this->fb->getRedirectLoginHelper();
         $permissions = ['user_photos'];
         $loginUrl = $helper->getLoginUrl('https://localhost/facebook/getToken', $permissions);
 
@@ -58,14 +55,8 @@ class Facebook
             return redirect('/login');
         }
 
-        $fb = new \Facebook\Facebook([
-            'app_id' => env('client_id'),
-            'app_secret' => env('client_secret'),
-            'default_graph_version' => 'v3.2',
-        ]);
-
         try {
-            $response = $fb->get('/me?fields=id', $access_token);
+            $response = $this->fb->get('/me?fields=id', $access_token);
         } catch (Facebook\Exceptions\FacebookResponseException $e) {
             echo 'Graph returned an error: ' . $e->getMessage();
             exit;
@@ -76,6 +67,7 @@ class Facebook
 
         $user = $response->getGraphUser();
         Cookie::queue('fb_user_id', $user['id'], 10);
-        return;
+        return Response::make();
     }
+
 }

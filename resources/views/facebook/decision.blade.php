@@ -66,20 +66,16 @@
     </head>
     <body>
         <div class="flex-center position-ref full-height">
-        <!-- <div class="top-right links">
-                    <a href="{{ url('/login') }}">Login</a>
-                    <a href="{{ url('/register') }}">Register</a>
-                </div> -->
             <div class="content">
                 <div class="title m-b-md">
                     Photocopy into which location?
                 </div>
                 <p>Pick a place for us to save your photos</p>
                 <div class="links">
-                    <a href="/savePhotosToComputer">Your Computer</a>
-                    <a href="">Google Drive</a>
-                    <a href="">One Drive</a>
-                    <a href="">Dropbox</a>
+                    <a href="/facebook/savePhotosToComputer/{{ $albumId }}/{{ $albumName }}">Your Computer</a>
+                    <a href="" style="font-weight:100;">Google Drive</a>
+                    <a href="" style="font-weight:100;">One Drive</a>
+                    <a href="" style="font-weight:100;">Dropbox</a>
 
                 </div>
             </div>

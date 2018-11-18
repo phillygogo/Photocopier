@@ -11,8 +11,11 @@
 |
  */
 
-Route::get('/', 'PhotoController@index');
-Route::get('/savePhotosToComputer', 'PhotoController@savePhotosToComputer');
-
-Route::get('/facebook', 'FacebookController@index')->middleware('facebook');
+Route::get('/', 'AppController@index');
 Route::get('/facebook/getToken', 'FacebookController@getToken');
+
+Route::group(['middleware' => ['facebook']], function () {
+    Route::get('/facebook/albums', 'FacebookController@albums');
+    Route::get('/facebook/decision/{albumId}/{albumName}', 'FacebookController@decision');
+    Route::get('/facebook/savePhotosToComputer/{albumId}/{albumName}', 'FacebookController@savePhotosToComputer');
+});
