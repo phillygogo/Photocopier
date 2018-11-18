@@ -4,7 +4,7 @@ A photocopier app that will pull your photos from facebook and save them to the 
 
 #How to install?
 Uses Docker for windows (should also work with Docker Linux out of the box)
-- Git clone this container
+- Git clone this repo
 - Download docker
 - run docker-compose run composer install
 
