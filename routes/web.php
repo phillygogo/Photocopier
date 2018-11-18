@@ -13,8 +13,6 @@
 
 Route::get('/', 'PhotoController@index');
 Route::get('/savePhotosToComputer', 'PhotoController@savePhotosToComputer');
-Route::get('/download', 'PhotoController@download');
 
-Route::get('/login', 'FacebookController@login');
-Route::get('/getToken', 'FacebookController@getToken');
-Route::get('/getUser', 'FacebookController@getUser');
+Route::get('/facebook', 'FacebookController@index')->middleware('facebook');
+Route::get('/facebook/getToken', 'FacebookController@getToken');

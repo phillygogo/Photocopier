@@ -73,7 +73,7 @@ class PhotoController extends Controller
             return response()->download($filetopath, $zipFileName, $headers)->deleteFileAfterSend(true);
         }
 
-        return redirect('/');
+        return view('/photo/homepage');
     }
 
 /**

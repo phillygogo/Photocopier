@@ -72,7 +72,7 @@
                 </div>
                 <p> Which one of the social media platforms would you like to photocopy from?
                 <div class="links">
-                    <a href="/login">Facebook</a>
+                    <a href="/facebook">Facebook</a>
                     <a href="/">Instagram</a>
                     <a href="/">Dropbox</a>
                     <a href="/">Google Drive</a>

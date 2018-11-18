@@ -2,27 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use Cookie;
-
 class FacebookController extends Controller
 {
+    // public function __construct(\Facebook\Facebook $fb) {
+    //     $this->fb = $fb;
+    // }
 
-    public function login()
+    public function index()
     {
-        if (!session_id()) {
-            session_start();
-        }
-
-        $fb = new \Facebook\Facebook([
-            'app_id' => env('client_id'),
-            'app_secret' => env('client_secret'),
-            'default_graph_version' => 'v2.2',
-        ]);
-
-        $helper = $fb->getRedirectLoginHelper();
-        $permissions = ['user_photos'];
-        $loginUrl = $helper->getLoginUrl('https://localhost/getToken', $permissions);
-        echo '<a href="' . htmlspecialchars($loginUrl) . '">Log in with Facebook!</a>';
+        return view('photo/decision');
     }
 
     public function getToken()
@@ -50,7 +38,6 @@ class FacebookController extends Controller
             echo 'Facebook SDK returned an error: ' . $e->getMessage();
             exit;
         }
-
         if (!isset($accessToken)) {
             if ($helper->getError()) {
                 header('HTTP/1.0 401 Unauthorized');
@@ -81,39 +68,8 @@ class FacebookController extends Controller
                 exit;
             }
         }
-
-        return redirect('/getUser')->cookie(
+        return redirect('/facebook')->cookie(
             'fb_access_token', $accessToken, 10
         );
     }
-
-    public function getUser()
-    {
-        $access_token = Cookie::get('fb_access_token');
-
-        if (!isset($access_token)) {
-            return redirect('/login');
-        }
-
-        $fb = new \Facebook\Facebook([
-            'app_id' => env('client_id'),
-            'app_secret' => env('client_secret'),
-            'default_graph_version' => 'v3.2',
-        ]);
-
-        try {
-            $response = $fb->get('/me?fields=id,cover,name,first_name,last_name,age_range,link,gender,locale,picture,timezone,updated_time,verified', $access_token);
-        } catch (Facebook\Exceptions\FacebookResponseException $e) {
-            echo 'Graph returned an error: ' . $e->getMessage();
-            exit;
-        } catch (Facebook\Exceptions\FacebookSDKException $e) {
-            echo 'Facebook SDK returned an error: ' . $e->getMessage();
-            exit;
-        }
-
-        $user = $response->getGraphUser();
-        Cookie::queue('fb_user_id', $user['id'], 10);
-        return view('photo/decision');
-    }
-
 }
