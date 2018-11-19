@@ -19,3 +19,9 @@ Route::group(['middleware' => ['facebook']], function () {
     Route::get('/facebook/decision/{albumId}/{albumName}', 'FacebookController@decision');
     Route::get('/facebook/savePhotosToComputer/{albumId}/{albumName}', 'FacebookController@savePhotosToComputer');
 });
+
+Route::group(['middleware' => ['googleDrive']], function () {
+    Route::get('/googleDrive', 'GoogleDriveController@index');
+
+});
+Route::get('/googleDrive/getAccessToken', 'GoogleDriveController@getAccessToken');

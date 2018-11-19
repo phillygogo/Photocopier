@@ -5,7 +5,13 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>Laravel</title>
+        <script type="text/javascript">
+            if (window.location.hash == '#_=_') {
+                window.location.hash = '';
+            }
+        </script>
+
+        <title>Photocopier</title>
 
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
@@ -73,7 +79,7 @@
                 <p>Pick a place for us to save your photos</p>
                 <div class="links">
                     <a href="/facebook/savePhotosToComputer/{{ $albumId }}/{{ $albumName }}">Your Computer</a>
-                    <a href="" style="font-weight:100;">Google Drive</a>
+                    <a href="/googleDrive">Google Drive</a>
                     <a href="" style="font-weight:100;">One Drive</a>
                     <a href="" style="font-weight:100;">Dropbox</a>
 

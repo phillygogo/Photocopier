@@ -53,5 +53,6 @@ class Kernel extends HttpKernel
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'facebook' => \App\Http\Middleware\FacebookMiddleware::class,
+        'googleDrive' => \App\Http\Middleware\GoogleDriveMiddleware::class,
     ];
 }
