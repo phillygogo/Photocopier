@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Cookie;
 use Google_Client;
 use Google_Service_Drive;
 
@@ -18,15 +19,16 @@ class GoogleDriveController extends Controller
         $client->setScopes("https://www.googleapis.com/auth/drive");
         $client->setRedirectUri(env("googleDrive_redirect_url"));
 
-//
+        $google_access_token = Cookie::get('google_access_token');
 
-        $authUrl = $client->createAuthUrl();
-
-        return redirect()->away($authUrl)->cookie(
-            'google_has_logged', true, 10
-        );
-
+        if (!isset($google_access_token)) {
+            $authUrl = $client->createAuthUrl();
+            return redirect()->away($authUrl)->cookie(
+                'google_has_logged', true, 10
+            );
+        }
         dd('stop');
+
         // Get the API client and construct the service object.
         // $client = $this->getClient();
         $service = new Google_Service_Drive($client);
@@ -43,7 +45,7 @@ class GoogleDriveController extends Controller
 
         // $client->setAuthConfig('credentials.json');
         $client->setClientId(env("googleDrive_client_id"));
-        $client->setClientSecret(env("googleDrive_client_id"));
+        $client->setClientSecret(env("googleDrive_client_secret"));
         $client->setScopes("https://www.googleapis.com/auth/drive");
         $client->setRedirectUri(env("googleDrive_redirect_url"));
         $client->setAccessType('offline');
@@ -71,8 +73,6 @@ class GoogleDriveController extends Controller
                 // Exchange authorization code for an access token.
                 $accessToken = $client->fetchAccessTokenWithAuthCode($authCode);
 
-                var_dump($accessToken);
-
                 $client->setAccessToken($accessToken);
 
                 // Check to see if there was an error.
@@ -86,9 +86,10 @@ class GoogleDriveController extends Controller
             // }
             // file_put_contents($tokenPath, json_encode($client->getAccessToken()));
         }
-        dd($client);
 
-        return $client;
+        return redirect('/googleDrive')->cookie(
+            'google_access_token', $accessToken, 10
+        );
     }
 
     public function redirectAwayforAuth($client)
