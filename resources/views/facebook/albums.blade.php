@@ -5,6 +5,13 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    <script type="text/javascript">
+    console.log(window.location.hash);
+        if (window.location.hash == '#_=_') {
+            window.location.hash = '';
+        }
+    </script>
+
         <title>Laravel</title>
 
         <!-- Fonts -->
