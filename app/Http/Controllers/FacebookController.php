@@ -3,22 +3,159 @@
 namespace App\Http\Controllers;
 
 use Cookie;
+use Google_Client;
+use Google_Service_Drive;
+use Google_Service_Drive_DriveFile;
 use Ziparchive;
 use \Facebook\Facebook;
 
 class FacebookController extends Controller
 {
-    public function __construct(Facebook $fb)
+    public function __construct(Facebook $fb, Google_Client $client)
     {
         $this->fb = $fb;
+        $this->client = $client;
+
+        $this->decisions = ['computer' => 'Your Computer', 'googleDrive' => 'Google Drive'];
+    }
+
+    public function savePhotos($decision)
+    {
+        if ($decision === 'googleDrive') {
+            return $this->savePhotosGoogleDrive();
+        } else {
+            $decided = 'computer';
+            return $this->savePhotosToComputer();
+        }
+
+        return view('facebook/decided', ['decisions' => $this->decisions, 'decided' => $decided]);
     }
 
     public function decision($albumId, $albumName)
     {
-        return view('facebook/decision', ['albumId' => $albumId, 'albumName' => $albumName]);
+        session(['albumId' => $albumId, 'albumName' => $albumName]);
+
+        return view('facebook/decision', ['decisions' => $this->decisions]);
     }
 
-    public function albums()
+    /**
+     * this function is used to save Photos to the .
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function savePhotosGoogleDrive()
+    {
+        $session = session()->all();
+
+        $albumPhotos = $this->getAlbumPhotos($session['albumId']);
+
+        $google_access_token = Cookie::get('google_access_token');
+
+        if (!isset($google_access_token)) {
+            $authUrl = $this->client->createAuthUrl();
+            return redirect()->away($authUrl);
+        } else {
+            $this->client->setAccessToken($google_access_token);
+        }
+
+        $name = 'Facebook_' . $session['albumName'];
+
+        //Creating the folder to save the file too
+        $service = new Google_Service_Drive($this->client);
+        $fileMetadata = new Google_Service_Drive_DriveFile(array(
+            'name' => $name,
+            'mimeType' => 'application/vnd.google-apps.folder'));
+
+        //Return the folder
+        $folder = $service->files->create($fileMetadata, array(
+            'fields' => 'id'));
+
+        foreach ($albumPhotos as $photo) {
+            $url = $photo['source'];
+            $photoName = $session['albumName'] . time() . '.jpg';
+            $contents = file_get_contents($url);
+
+            $fileMetadata = new Google_Service_Drive_DriveFile(array(
+                'name' => $photoName,
+                'parents' => array($folder->id),
+            ));
+
+            $service->files->create($fileMetadata, array(
+                'data' => $contents,
+                'mimeType' => 'image/jpeg',
+                'uploadType' => 'multipart',
+                'fields' => 'id'));
+        }
+        return view('facebook/decided', ['decisions' => $this->decisions, 'decided' => 'googleDrive']);
+    }
+
+    /**
+     * Returns an authorized API client.
+     * @return Google_Client the authorized client object
+     */
+    public function getGoogleAccessToken()
+    {
+        // If there is no previous token or it's expired.
+        if ($this->client->isAccessTokenExpired()) {
+            // Refresh the token if possible, else fetch a new one.
+            if ($this->client->getRefreshToken()) {
+                $this->client->fetchAccessTokenWithRefreshToken($this->client->getRefreshToken());
+            } else {
+                // Exchange authorization code for an access token.
+                $authCode = $_GET['code'];
+                $accessToken = $this->client->fetchAccessTokenWithAuthCode($authCode);
+                $this->client->setAccessToken($accessToken);
+
+                // Check to see if there was an error.
+                if (array_key_exists('error', $accessToken)) {
+                    throw new Exception(join(', ', $accessToken));
+                }
+            }
+        }
+        return redirect('/facebook/savePhotosGoogleDrive')->cookie(
+            'google_access_token', $accessToken, 10
+        );
+    }
+
+    /**
+     * this function is used to save Photos to the .
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function savePhotosToComputer()
+    {
+        $session = session()->all();
+        $albumPhotos = $this->getAlbumPhotos($session['albumId']);
+
+        $zip = new ZipArchive;
+
+        $public_dir = public_path();
+        $zipFileName = $session['albumName'] . ".zip";
+        $filetopath = $public_dir . '/' . $zipFileName;
+        $headers = ['Content-Type' => 'application/octet-stream'];
+
+        if ($zip->open($public_dir . '/' . $zipFileName, ZipArchive::CREATE) === true) {
+            foreach ($albumPhotos as $photo) {
+                $name = $session['albumName'] . time() . '.jpg';
+                $url = $photo['source'];
+                $contents = file_get_contents($url);
+
+                $zip->addFromString($name, $contents);
+            }
+            $zip->close();
+        }
+        if (file_exists($filetopath)) {
+            return response()->download($filetopath, $zipFileName, $headers)->deleteFileAfterSend(true);
+        }
+
+    }
+
+    /**
+     * fetches all the albums for a Facebook user
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getAlbums()
     {
         $userId = Cookie::get('fb_user_id');
         $access_token = Cookie::get('fb_access_token');
@@ -43,11 +180,11 @@ class FacebookController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
+     * fetches all the photos for a specific facebook album
      *
      * @return \Illuminate\Http\Response
      */
-    public function savePhotosToComputer($albumId, $albumName)
+    public function getAlbumPhotos($albumId)
     {
         $userId = Cookie::get('fb_user_id');
         $access_token = Cookie::get('fb_access_token');
@@ -66,27 +203,8 @@ class FacebookController extends Controller
             exit;
         }
 
-        $albumPhotos = $response->getGraphList();
-        $zip = new ZipArchive;
+        return $response->getGraphList();
 
-        $public_dir = public_path();
-        $zipFileName = "$albumName.zip";
-        $filetopath = $public_dir . '/' . $zipFileName;
-        $headers = ['Content-Type' => 'application/octet-stream'];
-
-        if ($zip->open($public_dir . '/' . $zipFileName, ZipArchive::CREATE) === true) {
-            foreach ($albumPhotos as $photo) {
-                $name = $albumName . time() . '.jpg';
-                $url = $photo['source'];
-                $contents = file_get_contents($url);
-
-                $zip->addFromString($name, $contents);
-            }
-            $zip->close();
-        }
-        if (file_exists($filetopath)) {
-            return response()->download($filetopath, $zipFileName, $headers)->deleteFileAfterSend(true);
-        }
     }
 
     public function getToken()
@@ -134,7 +252,7 @@ class FacebookController extends Controller
                 exit;
             }
         }
-        return redirect('/facebook/albums')->cookie(
+        return redirect('/facebook/getAlbums')->cookie(
             'fb_access_token', $accessToken, 10
         );
     }

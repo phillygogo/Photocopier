@@ -15,13 +15,15 @@ Route::get('/', 'AppController@index');
 Route::get('/facebook/getToken', 'FacebookController@getToken');
 
 Route::group(['middleware' => ['facebook']], function () {
-    Route::get('/facebook/albums', 'FacebookController@albums');
+    Route::get('/facebook/getAlbums', 'FacebookController@getAlbums');
     Route::get('/facebook/decision/{albumId}/{albumName}', 'FacebookController@decision');
-    Route::get('/facebook/savePhotosToComputer/{albumId}/{albumName}', 'FacebookController@savePhotosToComputer');
+    Route::get('/facebook/savePhotos/{decision}', 'FacebookController@savePhotos');
+    Route::get('/facebook/getGoogleAccessToken', 'FacebookController@getGoogleAccessToken');
+    Route::get('/facebook/savePhotosGoogleDrive', 'FacebookController@savePhotosGoogleDrive');
+
 });
 
 Route::group(['middleware' => ['googleDrive']], function () {
     Route::get('/googleDrive', 'GoogleDriveController@index');
 
 });
-Route::get('/googleDrive/getAccessToken', 'GoogleDriveController@getAccessToken');

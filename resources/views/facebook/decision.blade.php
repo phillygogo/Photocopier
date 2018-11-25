@@ -15,7 +15,7 @@
 
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
-
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
         <!-- Styles -->
         <style>
             html, body {
@@ -65,6 +65,11 @@
                 text-transform: uppercase;
             }
 
+            .fa-check-circle {
+                color: green;
+                margin-right: -20px;
+            }
+
             .m-b-md {
                 margin-bottom: 30px;
             }
@@ -78,8 +83,10 @@
                 </div>
                 <p>Pick a place for us to save your photos</p>
                 <div class="links">
-                    <a href="/facebook/savePhotosToComputer/{{ $albumId }}/{{ $albumName }}">Your Computer</a>
-                    <a href="/googleDrive">Google Drive</a>
+                    @foreach ($decisions as $key => $value)
+                        <a id="{{$key}}" href="/facebook/savePhotos/{{$key}}">{{$value}}</a>
+                    @endforeach
+                    <!-- <i class="fas fa-check-circle"></i><a href="/facebook/savePhotos/GoogleDrive">Google Drive</a> -->
                     <a href="" style="font-weight:100;">One Drive</a>
                     <a href="" style="font-weight:100;">Dropbox</a>
 

@@ -4,16 +4,18 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+
         <script type="text/javascript">
             if (window.location.hash == '#_=_') {
                 window.location.hash = '';
             }
         </script>
+
         <title>Photocopier</title>
 
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
-
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
         <!-- Styles -->
         <style>
             html, body {
@@ -63,6 +65,11 @@
                 text-transform: uppercase;
             }
 
+            .fa-check-circle {
+                color: green;
+                margin-right: -20px;
+            }
+
             .m-b-md {
                 margin-bottom: 30px;
             }
@@ -72,15 +79,20 @@
         <div class="flex-center position-ref full-height">
             <div class="content">
                 <div class="title m-b-md">
-                    Welcome to Photocopier!
+                    Photocopy into which location?
                 </div>
-                <p> Which one of the social media platforms would you like to photocopy from?
+                <p>Pick a place for us to save your photos</p>
                 <div class="links">
-                    <a href="/facebook/getAlbums">Facebook</a>
-                    <a href="/" style="font-weight:100;">Instagram</a>
-                    <a href="/" style="font-weight:100;">Dropbox</a>
-                    <a href="/" style="font-weight:100;">Google Drive</a>
-                    <a href="/" style="font-weight:100;">One Drive</a>
+                    @foreach ($decisions as $key => $value)
+                        @if ($decided == $key)
+                            <i class="fas fa-check-circle"></i><a id="{{$key}}" href="/facebook/savePhotos/{{$key}}">{{$value}}</a>
+                        @else
+                            <a id="{{$key}}" href="/facebook/savePhotos/{{$key}}">{{$value}}</a>
+                        @endif
+                    @endforeach
+                    <a href="" style="font-weight:100;">One Drive</a>
+                    <a href="" style="font-weight:100;">Dropbox</a>
+
                 </div>
             </div>
         </div>

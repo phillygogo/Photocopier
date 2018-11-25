@@ -65,8 +65,6 @@ class GoogleDriveController extends Controller
         );
         $results = $service->files->listFiles($optParams);
 
-        dd($results);
-
         if (count($results->getFiles()) == 0) {
             var_dump("No files found.\n");
             return false;
