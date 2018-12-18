@@ -77,7 +77,7 @@
                 <p> Which one of the social media platforms would you like to photocopy from?
                 <div class="links">
                     <a href="/facebook/getAlbums">Facebook</a>
-                    <a href="/" style="font-weight:100;">Instagram</a>
+                    <a href="/instagram">Instagram</a>
                     <a href="/" style="font-weight:100;">Dropbox</a>
                     <a href="/" style="font-weight:100;">Google Drive</a>
                     <a href="/" style="font-weight:100;">One Drive</a>

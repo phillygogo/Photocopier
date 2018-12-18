@@ -20,10 +20,11 @@ Route::group(['middleware' => ['facebook']], function () {
     Route::get('/facebook/savePhotos/{decision}', 'FacebookController@savePhotos');
     Route::get('/facebook/getGoogleAccessToken', 'FacebookController@getGoogleAccessToken');
     Route::get('/facebook/savePhotosGoogleDrive', 'FacebookController@savePhotosGoogleDrive');
-
 });
 
 Route::group(['middleware' => ['googleDrive']], function () {
     Route::get('/googleDrive', 'GoogleDriveController@index');
-
 });
+
+Route::get('/instagram/callback', 'InstagramController@callback');
+Route::get('/instagram', 'InstagramController@index');

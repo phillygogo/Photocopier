@@ -5,6 +5,9 @@ namespace App\Providers;
 use Google_Client;
 use Illuminate\Support\ServiceProvider;
 use \Facebook\Facebook;
+use GuzzleHttp\Client as GuzzleClient;
+
+use App\Http\Controllers\InstagramController;
 
 class SocialMediaProvider extends ServiceProvider
 {
@@ -47,5 +50,11 @@ class SocialMediaProvider extends ServiceProvider
 
             return $client;
         });
+
+        $this->app->when(InstagramController::class)
+            ->needs(GuzzleClient::class)
+            ->give(function () {
+                return new GuzzleClient(["base_uri" => "https://api.instagram.com"]);
+            });
     }
 }

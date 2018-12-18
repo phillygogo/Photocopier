@@ -6,7 +6,7 @@ use Cookie;
 use Google_Client;
 use Google_Service_Drive;
 use Google_Service_Drive_DriveFile;
-use Ziparchive;
+use ZipArchive;
 use \Facebook\Facebook;
 
 class FacebookController extends Controller
