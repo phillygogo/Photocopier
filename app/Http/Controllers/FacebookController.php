@@ -131,10 +131,10 @@ class FacebookController extends Controller
 
         $public_dir = public_path();
         $zipFileName = $session['albumName'] . ".zip";
-        $filetopath = $public_dir . '/' . $zipFileName;
+        $pathToFile = $public_dir . '/' . $zipFileName;
         $headers = ['Content-Type' => 'application/octet-stream'];
 
-        if ($zip->open($public_dir . '/' . $zipFileName, ZipArchive::CREATE) === true) {
+        if ($zip->open($pathToFile, ZipArchive::CREATE) === true) {
             foreach ($albumPhotos as $photo) {
                 $name = $session['albumName'] . time() . '.jpg';
                 $url = $photo['source'];
@@ -144,8 +144,8 @@ class FacebookController extends Controller
             }
             $zip->close();
         }
-        if (file_exists($filetopath)) {
-            return response()->download($filetopath, $zipFileName, $headers)->deleteFileAfterSend(true);
+        if (file_exists($pathToFile)) {
+            return response()->download($pathToFile, $zipFileName, $headers)->deleteFileAfterSend(true);
         }
 
     }
