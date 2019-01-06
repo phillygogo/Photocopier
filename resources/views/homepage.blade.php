@@ -70,6 +70,9 @@
     </head>
     <body>
         <div class="flex-center position-ref full-height">
+            <div class="logo">
+                <img src="{{ asset('images/logo.png') }}" />
+            </div>
             <div class="content">
                 <div class="title m-b-md">
                     Welcome to Photocopier!
