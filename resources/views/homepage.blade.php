@@ -14,29 +14,55 @@
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
 
+        <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+
         <!-- Styles -->
         <style>
             html, body {
                 background-color: #fff;
                 color: #636b6f;
-                font-family: 'Raleway', sans-serif;
+                font-family: 'open sans', sans-serif;
                 font-weight: 100;
                 height: 100vh;
                 margin: 0;
+                margin: auto;
+
+            }
+            row {
+
             }
 
-            .full-height {
-                height: 100vh;
+            .container {
+                margin-top: 120px;
             }
+
+            .photo-nav {
+                margin: auto;
+                max-width: 978px;
+            }
+            /* .full-height {
+                height: 100vh;
+            } */
 
             .flex-center {
                 display: flex;
                 justify-content: center;
-                margin-top: 10%;
+            }
+
+            .photo-header {
+                margin: auto;
+                max-width: 978px;
+            }
+            #photo-logo {
+                height: 90px;
             }
 
             .position-ref {
                 position: relative;
+            }
+
+            .photo-banner {
+                margin-top: 40px;
             }
 
             .top-right {
@@ -55,7 +81,7 @@
 
             .links > a {
                 color: #636b6f;
-                padding: 0 25px;
+                padding: 0 15px;
                 font-size: 12px;
                 font-weight: 600;
                 letter-spacing: .1rem;
@@ -69,23 +95,36 @@
         </style>
     </head>
     <body>
-        <div class="flex-center position-ref full-height">
-            <div class="logo">
-                <img src="{{ asset('images/logo.png') }}" />
+
+    <div class="photo-header" role="banner">
+        <div class="row">
+            <div class="logo col-md-2">
+                <img id="photo-logo" src="{{ asset('images/logo.png') }}" />
             </div>
-            <div class="content">
-                <div class="title m-b-md">
-                    Welcome to Photocopier!
-                </div>
-                <p> Which one of the social media platforms would you like to photocopy from?
-                <div class="links">
-                    <a href="/facebook/getAlbums">Facebook</a>
-                    <a href="/" style="font-weight:100;">Instagram</a>
-                    <a href="/" style="font-weight:100;">Dropbox</a>
-                    <a href="/" style="font-weight:100;">Google Drive</a>
-                    <a href="/" style="font-weight:100;">One Drive</a>
-                </div>
+            <div class="col-md-8 text-center photo-banner">
+                Welcome to Photocopier!
+            </div>
+            <div class="col-md-2 text-right photo-banner"><span>About us</span></div>
+        </div>
+    </div>
+    </div>
+        <div class="photo-nav position-ref full-height border-top border-bottom">
+        <div class="row">
+            <div class="links">
+                <a href="/facebook/getAlbums">Facebook</a>
+                <a href="/" style="font-weight:100;">Instagram</a>
+                <a href="/" style="font-weight:100;">Dropbox</a>
+                <a href="/" style="font-weight:100;">Google Drive</a>
+                <a href="/" style="font-weight:100;">One Drive</a>
             </div>
         </div>
+    </div>
+    <div class="container">
+        <div class="text-center title">
+            Welcome to Photocopier!
+        </div>
+        <p class="text-center"> Which one of the social media platforms would you like to photocopy from?
+    </div>
+
     </body>
 </html>
