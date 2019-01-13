@@ -21,34 +21,14 @@
             html, body {
                 background-color: #fff;
                 color: #636b6f;
-                font-family: 'open sans', sans-serif;
+                font-family: 'open sans Light', sans-serif;
                 font-weight: 100;
                 height: 100vh;
                 margin: 0;
                 margin: auto;
 
             }
-            row {
 
-            }
-
-            .container {
-                margin-top: 120px;
-            }
-
-            /* .full-height {
-                height: 100vh;
-            } */
-
-            .flex-center {
-                display: flex;
-                justify-content: center;
-            }
-
-            .photo-content {
-                margin: auto;
-                max-width: 978px;
-            }
             #photo-logo {
                 height: 90px;
             }
@@ -71,10 +51,6 @@
                 text-align: center;
             }
 
-            .title {
-                font-size: 84px;
-            }
-
             .links > a {
                 color: #636b6f;
                 padding: 0 15px;
@@ -89,39 +65,85 @@
                 color: #636b6f;
             }
 
+            .photo-title {
+                color: #333;
+                font-size: 40px;
+                font-weight: 300;
+                text-alight: center;
+                line-height: 81px;
+            }
+
+            .photo-content {
+                margin: auto;
+                max-width: 978px;
+            }
+
+            .photo-body {
+                margin-top: 70px;
+            }
+
+            .photo-nav {
+                line-height: 35px;
+            }
+
+            .photo-footer {
+                margin-top: 35px;
+            }
+
+            .container {
+                margin: auto;
+                max-width: 978px;
+                text-align: center;
+            }
+
+            .container > p {
+                max-width: 500px;
+                margin: auto;
+                text-align: center;
+            }
+
+            .container > img {
+                margin-top: 35px;
+            }
+
             .m-b-md {
                 margin-bottom: 30px;
             }
         </style>
     </head>
     <body>
-
-    <div class="photo-header" role="banner">
-        <div class="row photo-content">
-            <div class="logo col-md-2">
-                <img id="photo-logo" src="{{ asset('images/banner_logo.png') }}" />
-            </div>
-            <div class="col-md-2 offset-md-8 text-right photo-banner"><a href="/">About us</a></div>
-        </div>
-    </div>
-    </div>
-        <div class="photo-nav position-ref full-height border-top border-bottom">
-        <div class="row photo-content">
-            <div class="links">
-                <a href="/facebook/getAlbums">Facebook</a>
-                <a href="/" style="color:#636b6f36;">Instagram</a>
-                <a href="/" style="color:#636b6f36;">Dropbox</a>
-                <a href="/" style="color:#636b6f36;">Google Drive</a>
-                <a href="/" style=color:#636b6f36;">One Drive</a>
+        <div class="photo-header" role="banner">
+            <div class="row photo-content">
+                <div class="logo col-md-2">
+                    <img id="photo-logo" src="{{ asset('images/banner_logo.png') }}" />
+                </div>
+                <div class="col-md-2 offset-md-8 text-right photo-banner"><a href="/">About us</a></div>
             </div>
         </div>
-    </div>
-    <div class="container">
-        <div class="text-center title">
-            Welcome to Photocopier!
         </div>
-        <p class="text-center"> Which one of the social media platforms would you like to photocopy from?
-    </div>
-
+            <div class="photo-nav position-ref border-top border-bottom">
+            <div class="row photo-content">
+                <div class="links">
+                    <a href="/facebook/getAlbums">Facebook</a>
+                    <a href="/" style="color:#636b6f36;">Instagram</a>
+                    <a href="/" style="color:#636b6f36;">Dropbox</a>
+                    <a href="/" style="color:#636b6f36;">Google Drive</a>
+                    <a href="/" style=color:#636b6f36;">One Drive</a>
+                </div>
+            </div>
+        </div>
+        <div class="photo-body">
+            <div class="container">
+                <div class="photo-title">
+                    Backup your social media photos
+                </div>
+                <p>
+                    Connect to multiple social sites, store your memories on your own pc, or connect to cloud services.
+                </p>
+                <img src="{{ asset('images/homepage_infographic.jpg') }}" />
+            </div>
+        </div>
+        <div class="photo-footer border-top">
+        <div class="photo-content"></div>
     </body>
 </html>
