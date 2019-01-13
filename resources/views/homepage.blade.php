@@ -36,10 +36,6 @@
                 margin-top: 120px;
             }
 
-            .photo-nav {
-                margin: auto;
-                max-width: 978px;
-            }
             /* .full-height {
                 height: 100vh;
             } */
@@ -49,7 +45,7 @@
                 justify-content: center;
             }
 
-            .photo-header {
+            .photo-content {
                 margin: auto;
                 max-width: 978px;
             }
@@ -89,6 +85,10 @@
                 text-transform: uppercase;
             }
 
+            .photo-banner > a {
+                color: #636b6f;
+            }
+
             .m-b-md {
                 margin-bottom: 30px;
             }
@@ -97,25 +97,22 @@
     <body>
 
     <div class="photo-header" role="banner">
-        <div class="row">
+        <div class="row photo-content">
             <div class="logo col-md-2">
-                <img id="photo-logo" src="{{ asset('images/logo.png') }}" />
+                <img id="photo-logo" src="{{ asset('images/banner_logo.png') }}" />
             </div>
-            <div class="col-md-8 text-center photo-banner">
-                Welcome to Photocopier!
-            </div>
-            <div class="col-md-2 text-right photo-banner"><span>About us</span></div>
+            <div class="col-md-2 offset-md-8 text-right photo-banner"><a href="/">About us</a></div>
         </div>
     </div>
     </div>
         <div class="photo-nav position-ref full-height border-top border-bottom">
-        <div class="row">
+        <div class="row photo-content">
             <div class="links">
                 <a href="/facebook/getAlbums">Facebook</a>
-                <a href="/" style="font-weight:100;">Instagram</a>
-                <a href="/" style="font-weight:100;">Dropbox</a>
-                <a href="/" style="font-weight:100;">Google Drive</a>
-                <a href="/" style="font-weight:100;">One Drive</a>
+                <a href="/" style="color:#636b6f36;">Instagram</a>
+                <a href="/" style="color:#636b6f36;">Dropbox</a>
+                <a href="/" style="color:#636b6f36;">Google Drive</a>
+                <a href="/" style=color:#636b6f36;">One Drive</a>
             </div>
         </div>
     </div>
