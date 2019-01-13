@@ -13,7 +13,6 @@
 
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
-
         <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
 
         <!-- Styles -->
@@ -115,7 +114,7 @@
         <div class="photo-header" role="banner">
             <div class="row photo-content">
                 <div class="logo col-md-2">
-                    <img id="photo-logo" src="{{ asset('images/banner_logo.png') }}" />
+                <a href="/"><img id="photo-logo" src="{{ asset('images/banner_logo.png') }}" /></a>
                 </div>
                 <div class="col-md-2 offset-md-8 text-right photo-banner"><a href="/">About us</a></div>
             </div>
@@ -144,6 +143,5 @@
             </div>
         </div>
         <div class="photo-footer border-top">
-        <div class="photo-content"></div>
     </body>
 </html>
