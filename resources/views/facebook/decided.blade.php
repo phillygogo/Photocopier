@@ -6,7 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <script type="text/javascript">
-            if (window.location.hash == '#_=_') {
+            if (window.location.hash == '#_=_' || window.location.hash == '#') {
                 window.location.hash = '';
             }
         </script>
