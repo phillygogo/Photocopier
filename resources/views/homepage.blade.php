@@ -4,19 +4,13 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <script type="text/javascript">
-            if (window.location.hash == '#_=_' || window.location.hash == '#') {
-                window.location.hash = '';
-            }
-        </script>
+
         <title>Photocopier</title>
 
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
-
-        <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
-
+        <link href="{{ asset('css/app.css') }}" rel="stylesheet">
         <!-- Styles -->
         <style>
             html, body {
@@ -104,6 +98,7 @@
             }
 
             .container > img {
+                width: 70%;
                 margin-top: 35px;
             }
 
@@ -118,7 +113,8 @@
                 <div class="logo col-md-2">
                 <a href="/"><img id="photo-logo" src="{{ asset('images/banner_logo.png') }}" /></a>
                 </div>
-                <div class="col-md-2 offset-md-8 text-right photo-banner"><a href="/">About us</a></div>
+                <div xlass="col-md-8"></div>
+                <div class="col-md-2 col-md-offset-8 text-right photo-banner"><a href="/">About us</a></div>
             </div>
         </div>
         </div>
