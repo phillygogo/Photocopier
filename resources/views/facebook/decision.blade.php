@@ -6,7 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <script type="text/javascript">
-            if (window.location.hash == '#_=_') {
+            if (window.location.hash == '#_=_' || window.location.hash == '#') {
                 window.location.hash = '';
             }
         </script>
@@ -26,7 +26,7 @@
             <div class="logo col-md-2">
             <a href="/"><img id="photo-logo" src="{{ asset('images/banner_logo.png') }}" /></a>
             </div>
-            <div class="col-md-2 offset-md-8 text-right photo-banner"><a href="/">About us</a></div>
+            <div class="col-md-2 col-md-offset-8 text-right photo-banner"><a href="/">About us</a></div>
         </div>
     </div>
     </div>

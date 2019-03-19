@@ -5,13 +5,6 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <script type="text/javascript">
-    console.log(window.location.hash);
-        if (window.location.hash == '#_=_') {
-            window.location.hash = '';
-        }
-    </script>
-
         <title>Laravel</title>
 
         <!-- Fonts -->
@@ -120,7 +113,7 @@
             <div class="logo col-md-2">
                 <a href="/"><img id="photo-logo" src="{{ asset('images/banner_logo.png') }}" /></a>
             </div>
-            <div class="col-md-2 offset-md-8 text-right photo-banner"><a href="/">About us</a></div>
+            <div class="col-md-2 col-md-offset-8 text-right photo-banner"><a href="/">About us</a></div>
         </div>
     </div>
     </div>
@@ -141,7 +134,6 @@
                 Select an ablum:
             </div>
             <p>
-                Store this album where? choose on next screen
             </p>
             <div class="links">
             @foreach($PhotoAlbums as $album)

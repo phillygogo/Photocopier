@@ -37,8 +37,8 @@ class FacebookMiddleware
     public function login()
     {
         $helper = $this->fb->getRedirectLoginHelper();
-        $permissions = ['user_photos'];
-        $loginUrl = $helper->getLoginUrl('https://localhost/facebook/getToken', $permissions);
+        $data = ['scope' => 'user_photos'];
+        $loginUrl = $helper->getLoginUrl('https://ephotocopier.com/facebook/getToken', $data);
 
         $loginUrl = str_replace('amp;', '', htmlspecialchars($loginUrl));
 
