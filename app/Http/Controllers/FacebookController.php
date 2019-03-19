@@ -39,7 +39,7 @@ class FacebookController extends Controller
     }
 
     /**
-     * this function is used to save Photos to the .
+     * this function is used to save Photos to Google Drive.
      *
      * @return \Illuminate\Http\Response
      */
@@ -50,7 +50,6 @@ class FacebookController extends Controller
         $albumPhotos = $this->getAlbumPhotos($session['albumId']);
 
         $google_access_token = Cookie::get('google_access_token');
-
         if (!isset($google_access_token)) {
             $authUrl = $this->client->createAuthUrl();
             return redirect()->away($authUrl);
@@ -257,5 +256,3 @@ class FacebookController extends Controller
         );
     }
 }
-
-

@@ -22,8 +22,3 @@ Route::group(['middleware' => ['facebook']], function () {
     Route::get('/facebook/savePhotosGoogleDrive', 'FacebookController@savePhotosGoogleDrive');
 
 });
-
-Route::group(['middleware' => ['googleDrive']], function () {
-    Route::get('/googleDrive', 'GoogleDriveController@index');
-
-});

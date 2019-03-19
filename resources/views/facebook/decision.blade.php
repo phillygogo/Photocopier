@@ -5,12 +5,6 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <script type="text/javascript">
-            if (window.location.hash == '#_=_' || window.location.hash == '#') {
-                window.location.hash = '';
-            }
-        </script>
-
         <title>Photocopier</title>
 
         <!-- Fonts -->
@@ -24,9 +18,9 @@
     <div class="photo-header" role="banner">
         <div class="row photo-content">
             <div class="logo col-md-2">
-            <a href="/"><img id="photo-logo" src="{{ asset('images/banner_logo.png') }}" /></a>
+            <a href="/"><img id="photo-logo" src="{{ asset('images/logo.png') }}" /></a>
             </div>
-            <div class="col-md-2 col-md-offset-8 text-right photo-banner"><a href="/">About us</a></div>
+            <div class="col-md-2 offset-md-8 text-right photo-banner"><a href="/">About us</a></div>
         </div>
     </div>
     </div>
@@ -47,13 +41,12 @@
                 Photocopy into which location?
             </div>
             <div class="links">
-                    @foreach ($decisions as $key => $value)
-                        <a id="{{$key}}" href="/facebook/savePhotos/{{$key}}">{{$value}}</a>
-                    @endforeach
-                    <!-- <i class="fas fa-check-circle"></i><a href="/facebook/savePhotos/GoogleDrive">Google Drive</a> -->
-                    <a href="" style="color:#636b6f36;">One Drive</a>
-                    <a href="" style="color:#636b6f36;">Dropbox</a>
-                </div>
+                @foreach ($decisions as $key => $value)
+                    <a id="{{$key}}" href="/facebook/savePhotos/{{$key}}">{{$value}}</a>
+                @endforeach
+                <a href="" style="color:#636b6f36;">One Drive</a>
+                <a href="" style="color:#636b6f36;">Dropbox</a>
+            </div>
         </div>
     </div>
     </body>
