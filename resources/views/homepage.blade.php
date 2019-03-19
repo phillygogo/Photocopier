@@ -21,7 +21,7 @@
                 <a href="/"><img id="photo-logo" src="{{ asset('images/logo.png') }}" /></a>
                 </div>
                 <div xlass="col-md-8"></div>
-                <div class="col-md-2 col-md-offset-8 text-right photo-banner"><a href="/">About us</a></div>
+                <div class="col-md-2 offset-md-8 text-right photo-banner"><a href="/">About us</a></div>
             </div>
         </div>
         </div>
