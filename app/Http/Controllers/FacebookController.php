@@ -19,6 +19,50 @@ class FacebookController extends Controller
         $this->decisions = ['computer' => 'Your Computer', 'googleDrive' => 'Google Drive'];
     }
 
+    /**
+     * fetches all the albums for a Facebook user
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getAlbums()
+    {
+        $userId = Cookie::get('fb_user_id');
+        $access_token = Cookie::get('fb_access_token');
+        /* make the API call */
+        try {
+            $response = $this->fb->get(
+                "/{$userId}/albums",
+                $access_token
+            );
+
+        } catch (Facebook\Exceptions\FacebookResponseException $e) {
+            echo 'Graph returned an error: ' . $e->getMessage();
+            exit;
+        } catch (Facebook\Exceptions\FacebookSDKException $e) {
+            echo 'Facebook SDK returned an error: ' . $e->getMessage();
+            exit;
+        }
+
+        $data = $response->getGraphList();
+
+        return view('facebook/albums', ['PhotoAlbums' => $data]);
+    }
+
+    /**
+     * this function is a control function used to direct the user to make a decision
+     *
+     */
+    public function decision($albumId, $albumName)
+    {
+        session(['albumId' => $albumId, 'albumName' => $albumName]);
+
+        return view('facebook/decision', ['decisions' => $this->decisions]);
+    }
+
+    /**
+     * this function is a control function used to direct the user to the correct decision.
+     *
+     */
     public function savePhotos($decision)
     {
         if ($decision === 'googleDrive') {
@@ -31,17 +75,9 @@ class FacebookController extends Controller
         return view('facebook/decided', ['decisions' => $this->decisions, 'decided' => $decided]);
     }
 
-    public function decision($albumId, $albumName)
-    {
-        session(['albumId' => $albumId, 'albumName' => $albumName]);
-
-        return view('facebook/decision', ['decisions' => $this->decisions]);
-    }
-
     /**
      * this function is used to save Photos to Google Drive.
      *
-     * @return \Illuminate\Http\Response
      */
     public function savePhotosGoogleDrive()
     {
@@ -89,35 +125,7 @@ class FacebookController extends Controller
     }
 
     /**
-     * Returns an authorized API client.
-     * @return Google_Client the authorized client object
-     */
-    public function getGoogleAccessToken()
-    {
-        // If there is no previous token or it's expired.
-        if ($this->client->isAccessTokenExpired()) {
-            // Refresh the token if possible, else fetch a new one.
-            if ($this->client->getRefreshToken()) {
-                $this->client->fetchAccessTokenWithRefreshToken($this->client->getRefreshToken());
-            } else {
-                // Exchange authorization code for an access token.
-                $authCode = $_GET['code'];
-                $accessToken = $this->client->fetchAccessTokenWithAuthCode($authCode);
-                $this->client->setAccessToken($accessToken);
-
-                // Check to see if there was an error.
-                if (array_key_exists('error', $accessToken)) {
-                    throw new Exception(join(', ', $accessToken));
-                }
-            }
-        }
-        return redirect('/facebook/savePhotosGoogleDrive')->cookie(
-            'google_access_token', $accessToken, 10
-        );
-    }
-
-    /**
-     * this function is used to save Photos to the .
+     * this function is used to save Photos to the computer.
      *
      * @return \Illuminate\Http\Response
      */
@@ -150,35 +158,6 @@ class FacebookController extends Controller
     }
 
     /**
-     * fetches all the albums for a Facebook user
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function getAlbums()
-    {
-        $userId = Cookie::get('fb_user_id');
-        $access_token = Cookie::get('fb_access_token');
-        /* make the API call */
-        try {
-            $response = $this->fb->get(
-                "/{$userId}/albums",
-                $access_token
-            );
-
-        } catch (Facebook\Exceptions\FacebookResponseException $e) {
-            echo 'Graph returned an error: ' . $e->getMessage();
-            exit;
-        } catch (Facebook\Exceptions\FacebookSDKException $e) {
-            echo 'Facebook SDK returned an error: ' . $e->getMessage();
-            exit;
-        }
-
-        $data = $response->getGraphList();
-
-        return view('facebook/albums', ['PhotoAlbums' => $data]);
-    }
-
-    /**
      * fetches all the photos for a specific facebook album
      *
      * @return \Illuminate\Http\Response
@@ -203,9 +182,41 @@ class FacebookController extends Controller
         }
 
         return $response->getGraphList();
-
     }
 
+    /**
+     * Returns an authorized API client.
+     * @return Google_Client the authorized client object
+     */
+    public function getGoogleAccessToken()
+    {
+        // If there is no previous token or it's expired.
+        if ($this->client->isAccessTokenExpired()) {
+            // Refresh the token if possible, else fetch a new one.
+            if ($this->client->getRefreshToken()) {
+                $this->client->fetchAccessTokenWithRefreshToken($this->client->getRefreshToken());
+            } else {
+                // Exchange authorization code for an access token.
+                $authCode = $_GET['code'];
+                $accessToken = $this->client->fetchAccessTokenWithAuthCode($authCode);
+                $this->client->setAccessToken($accessToken);
+
+                // Check to see if there was an error.
+                if (array_key_exists('error', $accessToken)) {
+                    throw new Exception(join(', ', $accessToken));
+                }
+            }
+        }
+        return redirect('/facebook/savePhotosGoogleDrive')->cookie(
+            'google_access_token', $accessToken, 10
+        );
+    }
+
+    /**
+     *  Once Authenticated Facebook will follow the callback url to this function
+     *  which will fetch the access_token, and push the user to the next step.
+     *
+     */
     public function getToken()
     {
         $helper = $this->fb->getRedirectLoginHelper();
