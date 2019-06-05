@@ -15,7 +15,6 @@ class FacebookController extends Controller
     {
         $this->fb = $fb;
         $this->client = $client;
-
         $this->decisions = ['computer' => 'Your Computer', 'googleDrive' => 'Google Drive'];
     }
 

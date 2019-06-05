@@ -2,26 +2,22 @@
 	MIT License http://www.opensource.org/licenses/mit-license.php
 	Author Tobias Koppers @sokra
 */
-var ContextDependency = require("./ContextDependency");
-var CriticalDependencyWarning = require("./CriticalDependencyWarning");
+"use strict";
+const ContextDependency = require("./ContextDependency");
+const ContextDependencyTemplateAsRequireCall = require("./ContextDependencyTemplateAsRequireCall");
 
-function CommonJsRequireContextDependency(request, recursive, regExp, range, valueRange) {
-	ContextDependency.call(this, request, recursive, regExp);
-	this.range = range;
-	this.valueRange = valueRange;
-}
-module.exports = CommonJsRequireContextDependency;
-
-CommonJsRequireContextDependency.prototype = Object.create(ContextDependency.prototype);
-CommonJsRequireContextDependency.prototype.constructor = CommonJsRequireContextDependency;
-CommonJsRequireContextDependency.prototype.type = "cjs require context";
-
-CommonJsRequireContextDependency.prototype.getWarnings = function() {
-	if(this.critical) {
-		return [
-			new CriticalDependencyWarning(this.critical)
-		];
+class CommonJsRequireContextDependency extends ContextDependency {
+	constructor(options, range, valueRange) {
+		super(options);
+		this.range = range;
+		this.valueRange = valueRange;
 	}
-};
 
-CommonJsRequireContextDependency.Template = require("./ContextDependencyTemplateAsRequireCall");
+	get type() {
+		return "cjs require context";
+	}
+}
+
+CommonJsRequireContextDependency.Template = ContextDependencyTemplateAsRequireCall;
+
+module.exports = CommonJsRequireContextDependency;

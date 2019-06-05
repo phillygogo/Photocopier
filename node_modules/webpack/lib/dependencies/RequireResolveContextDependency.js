@@ -2,26 +2,22 @@
 	MIT License http://www.opensource.org/licenses/mit-license.php
 	Author Tobias Koppers @sokra
 */
-var ContextDependency = require("./ContextDependency");
-var CriticalDependencyWarning = require("./CriticalDependencyWarning");
+"use strict";
+const ContextDependency = require("./ContextDependency");
+const ContextDependencyTemplateAsId = require("./ContextDependencyTemplateAsId");
 
-function RequireResolveContextDependency(request, recursive, regExp, range, valueRange) {
-	ContextDependency.call(this, request, recursive, regExp);
-	this.range = range;
-	this.valueRange = valueRange;
-}
-module.exports = RequireResolveContextDependency;
-
-RequireResolveContextDependency.prototype = Object.create(ContextDependency.prototype);
-RequireResolveContextDependency.prototype.constructor = RequireResolveContextDependency;
-RequireResolveContextDependency.prototype.type = "amd require context";
-
-RequireResolveContextDependency.prototype.getWarnings = function() {
-	if(this.critical) {
-		return [
-			new CriticalDependencyWarning(this.critical)
-		];
+class RequireResolveContextDependency extends ContextDependency {
+	constructor(options, range, valueRange) {
+		super(options);
+		this.range = range;
+		this.valueRange = valueRange;
 	}
-};
 
-RequireResolveContextDependency.Template = require("./ContextDependencyTemplateAsId");
+	get type() {
+		return "amd require context";
+	}
+}
+
+RequireResolveContextDependency.Template = ContextDependencyTemplateAsId;
+
+module.exports = RequireResolveContextDependency;

@@ -31,7 +31,7 @@ services:
     ports:
         - "33061:3306"
   composer:
-        image: prooph/composer:7.0
+        image: prooph/composer:7.2
         working_dir: /var/www
         volumes:
             - composer-data:/root/composer/
